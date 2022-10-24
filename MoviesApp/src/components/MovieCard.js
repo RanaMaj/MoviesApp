@@ -1,8 +1,10 @@
 import { StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedbackBase, View, Image } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import Colors from '../constants/Colors'
 import Icon from 'react-native-vector-icons/Ionicons'
-
+import { AppContext } from '../context/AppContext'
+import { useNavigation } from '@react-navigation/native'
+import MoviesDetailes from '../screens/MoviesDetailes'
 
 const Data = [
     {
@@ -25,19 +27,23 @@ const Data = [
     }
 ]
 
-const MovieCard = () => {
+const MovieCard = (props) => {
 
     const [liked, setLiked] = useState(false)
-
-
+    const { movieShared, handelLiked } = useContext(AppContext)
+    const { navigate } = useNavigation();
     return (
-        <TouchableOpacity>
-            <TouchableOpacity style={styles.container} onPress={() => setLiked(!liked)}>
-                <Icon name={liked ? 'heart' : 'heart-outline'} color={liked ? Colors.HEART : Colors.WHITE} style={{ position: "absolute", bottom: 10, left: 10 }} />
+        <TouchableOpacity style={{ backgroundColor: 'red' }} key={props.item.id} >
+            <TouchableOpacity
+                style={styles.container}
+                onPress={() => navigate('Movies', { item: props.item })}
+            // onPress={() => setLiked(!liked)}
+            >
+                <Icon onPress={() => handelLiked(props.item.id)} name={props.item.like ? 'heart' : 'heart-outline'} color={props.item.like ? Colors.HEART : Colors.WHITE} style={{ position: "absolute", bottom: 10, left: 10 }} />
             </TouchableOpacity>
-            <View Ba>
+            <View>
                 <Image style={{ width: 230, height: 340, zIndex: 123, position: 'absolute' }}>{Data.image}</Image>
-                <Text style={styles.movieTitle} numberOfLines={3}>URI - Surgical Strike </Text>
+                <Text style={styles.movieTitle} numberOfLines={3}> {props.item.title}</Text>
                 <View style={styles.movieSubTitleContainer}>
                     <Text style={styles.movieSubTitle}>Mindi | (U/A)</Text>
                     <View style={styles.rowAndCenter}>
@@ -56,7 +62,7 @@ export default MovieCard
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: Colors.ACTIVE,
+        // backgroundColor: Colors.ACTIVE,
         height: 340,
         width: 230,
         borderRadius: 5,
@@ -68,6 +74,7 @@ const styles = StyleSheet.create({
         paddingVertical: 2,
         marginTop: 5,
         width: 230,
+        color: 'pink'
     },
     movieSubTitleContainer: {
         flexDirection: 'row',
